@@ -3,8 +3,8 @@ package bubbleterm
 import (
 	"os/exec"
 
-	tea "github.com/charmbracelet/bubbletea/v2"
-	"github.com/taigrr/bubbleterm/emulator"
+	tea "charm.land/bubbletea/v2"
+	"github.com/Ignoramuss/bubbleterm/emulator"
 )
 
 // terminalOutputMsg carries new terminal output
