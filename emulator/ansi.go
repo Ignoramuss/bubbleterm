@@ -127,19 +127,8 @@ func (e *Emulator) ptyReadLoop() {
 			}
 			continue
 
-		case 127: // DEL - Backspace behavior: move back then erase
-			e.mu.Lock()
-			screen := e.currentScreen()
-			if screen.cursorPos.X > 0 {
-				screen.moveCursor(-1, 0, false, false) // Move cursor back
-				screen.eraseRegion(Region{ // Erase at new position
-					X:  screen.cursorPos.X,
-					Y:  screen.cursorPos.Y,
-					X2: screen.cursorPos.X + 1,
-					Y2: screen.cursorPos.Y + 1,
-				}, CRClear)
-			}
-			e.mu.Unlock()
+		case 127: // DEL - Shell echoes this but handles display via ANSI escape sequences
+			// Do nothing - let shell's ESC[D and ESC[K handle cursor movement and erase
 
 		default:
 			// unhandled char, undefined behavior
