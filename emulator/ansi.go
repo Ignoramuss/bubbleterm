@@ -127,14 +127,18 @@ func (e *Emulator) ptyReadLoop() {
 			}
 			continue
 
-		case 127: // DEL  Delete Character
+		case 127: // DEL - Backspace behavior: move back then erase
 			e.mu.Lock()
-			e.currentScreen().eraseRegion(Region{
-				X:  e.currentScreen().cursorPos.X,
-				Y:  e.currentScreen().cursorPos.Y,
-				X2: e.currentScreen().cursorPos.X + 1,
-				Y2: e.currentScreen().cursorPos.Y + 1,
-			}, CRClear)
+			screen := e.currentScreen()
+			if screen.cursorPos.X > 0 {
+				screen.moveCursor(-1, 0, false, false) // Move cursor back
+				screen.eraseRegion(Region{ // Erase at new position
+					X:  screen.cursorPos.X,
+					Y:  screen.cursorPos.Y,
+					X2: screen.cursorPos.X + 1,
+					Y2: screen.cursorPos.Y + 1,
+				}, CRClear)
+			}
 			e.mu.Unlock()
 
 		default:
